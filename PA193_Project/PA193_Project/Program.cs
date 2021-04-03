@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace PA193_Project
 {
@@ -6,7 +6,11 @@ namespace PA193_Project
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            // Set up Dependency Injection
+            var services = Startup.ConfigureServices();
+            var serviceProvider = services.BuildServiceProvider();
+            serviceProvider.GetService<EntryPoint>().Run(args);
         }
+
     }
 }
