@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Text.Json;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using PA193_Project.Entities;
+using PA193_Project.Modules;
 using PA193_Project.Services;
 
 namespace PA193_Project
@@ -51,7 +53,15 @@ namespace PA193_Project
                     {
                         Filepath = filepath
                     };
-                    //var results = _parserService.Parse(document);
+
+                    _parserService.RegisterModule(new TitleModule());
+                    var results = _parserService.Parse(document);
+
+                    JsonSerializerOptions serializerOptions = new JsonSerializerOptions
+                    {
+                        IgnoreNullValues = true
+                    };
+                    _logger.LogDebug(JsonSerializer.Serialize(results, serializerOptions));
 
                     return 0;
                 });
