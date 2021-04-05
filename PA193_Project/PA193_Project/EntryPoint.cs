@@ -54,7 +54,9 @@ namespace PA193_Project
                         Filepath = filepath
                     };
 
+                    _parserService.RegisterModule(new HeaderFooterModule());
                     _parserService.RegisterModule(new TitleModule());
+                    _parserService.RegisterModule(new VersionsModule());
                     var results = _parserService.Parse(document);
 
                     JsonSerializerOptions serializerOptions = new JsonSerializerOptions
