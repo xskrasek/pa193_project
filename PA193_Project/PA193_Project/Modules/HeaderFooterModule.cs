@@ -77,7 +77,97 @@ namespace PA193_Project.Modules
              string header = current.Remove(current.Length -1);
 
 
+            var orig_collections = Regex.Matches(document.FullText, @"");
+
+            //Reverse, so I dont mess up the indexes by removing text from the start
+            foreach (var match in orig_collections.Reverse())
+            {
+                int text_index = match.Index;
+                int index_diff = 0;
+                bool is_match = true;
+                int j;
+
+
+                //hopefuly -2
+                for (j = 0; j < document.FullText.Length -text_index -2; j++)
+                {
+                    //document length check
+                    if (text_index + j >= document.FullText.Length - 1) break;
+                    
+                    //Check for whitespace, so comparison is valid with the non-whitespace version
+
+                    while (Char.IsWhiteSpace(document.FullText[text_index+ j])) {
+                        j++;
+                        index_diff++;
+                        continue;
+                    }
+                    //check for already full match
+                    if (j-index_diff +1 >= header.Length -1 )
+                    {
+                        break;
+                    }
+                    char current_char = header[j - index_diff + 1];
+                    if (document.FullText[text_index + j] != current_char) {
+
+                        //Number matching case, header has \d+ and real text some numbers
+                        if (Char.IsNumber(document.FullText[text_index + j]) && current_char == '\\' && header[j - index_diff + 2] == 'd')
+                        {
+                            //set header behind \d+ and cycle throuh the number. Both should end behind the number
+                            index_diff -= 3;
+                            while (Char.IsNumber(document.FullText[text_index + j]))
+                            {
+                                j++;
+                                //lower index diff so comparison for header does not break in case of big numbers
+                                index_diff++;
+                            }
+
+                            //This evens out the difference in case of whitespaces after numbers.
+                            while (Char.IsWhiteSpace(document.FullText[text_index + j]))
+                            {
+                                j++;
+                                //lower index diff so comparison for header does not break in case of big numbers
+                                index_diff++;
+                            }
+
+                            //TODO: Bracket parsing
+
+                        }
+                        //Handle brackets and maybe others in the future
+                        else if(new[] { '(', ')'  }.Contains(document.FullText[text_index+j]) && (current_char == '\\') 
+                            && (new[] { '(', ')' }.Contains(header[j - index_diff + 2])))
+                        {
+                            //move header forward and also full text behind the bracket
+                            index_diff -= 1;
+                            j++;
+                        }
+                        //In case the text is really different and should not be matched further
+                        else
+                        {
+                            char a = document.FullText[text_index + j];
+                            char b = header[j - index_diff + 1];
+
+                            //As the matching should be at least as long as the header text, take all longer as ok 
+                            if (j < header.Length)
+                            {
+                                is_match = false;
+                            }
+                            break;
+                        }
+                    }
+                    
+                }
+
+                //If this part of document with the symbol mathces header, remove it 
+                if (is_match)
+                {
+                    int p = document.FullText.Length;
+                    document.FullText = document.FullText.Remove(text_index, j);
+                }
+                var c = 5;
+            }
+            Console.WriteLine(document.FullText);
             //TODO: Go through orig text and match the parts, so the can be removed
         }
+
     }
 }
