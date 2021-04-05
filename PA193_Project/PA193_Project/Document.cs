@@ -16,7 +16,7 @@ namespace PA193_Project.Entities
                 _indices.Clear();
                 for (int i = 0; i < value.Length; i++)
                 {
-                    if (value[i] == 0xff)
+                    if (value[i] == 0x0c)
                     {
                         _indices.Add(i);
                     }
