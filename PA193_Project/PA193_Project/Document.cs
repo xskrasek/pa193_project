@@ -58,7 +58,10 @@ namespace PA193_Project.Entities
 
         public string GetPage(int pageNumber)
         {
-            throw new NotImplementedException();
+            pageNumber = Math.Clamp(pageNumber, 0, this.Indices.Count);
+            int charIndex = this.Indices[pageNumber];
+            int previousIndex = pageNumber == 0 ? 0 : this.Indices[pageNumber - 1];
+            return this.FullText[previousIndex..charIndex];
         }
     }
 }
