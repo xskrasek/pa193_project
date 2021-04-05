@@ -54,8 +54,10 @@ namespace PA193_Project
                         Filepath = filepath
                     };
 
-                    _parserService.RegisterModule(new TitleModule());
-                    var results = _parserService.Parse(document);
+                _logger.LogDebug($"Generated {document.Indices.Count} indices");
+
+                _parserService.RegisterModule(new TitleModule()); ;
+                var results = _parserService.Parse(document);
 
                     JsonSerializerOptions serializerOptions = new JsonSerializerOptions
                     {
