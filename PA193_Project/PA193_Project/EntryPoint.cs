@@ -48,8 +48,15 @@ namespace PA193_Project
                 if (help) { Console.WriteLine(commandLineOptions.GetHelp()); Environment.Exit(0); }
                 if (version) { Console.WriteLine("0.1"); Environment.Exit(0); }
 
+
                 _logger.LogDebug($"Filepath: {filepath}");
                 _logger.LogDebug($"Output: {output}");
+
+                _parserService.RegisterModule(new HeaderFooterModule());
+                _parserService.RegisterModule(new TitleModule());
+                _parserService.RegisterModule(new VersionsModule());
+                var results = _parserService.Parse(document);
+
 
                 _logger.LogDebug($"{filepath} -[ all ]-> {output}");
                 Document document = new Document
