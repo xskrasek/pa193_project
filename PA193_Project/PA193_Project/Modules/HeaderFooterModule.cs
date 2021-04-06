@@ -159,7 +159,7 @@ namespace PA193_Project.Modules
                     }
                 }
             }
-            Console.WriteLine(document.FullText);
+            //Console.WriteLine(document.FullText);
 
 
 
@@ -306,7 +306,7 @@ namespace PA193_Project.Modules
                     }
                 }
             }
-            Console.WriteLine(document.FullText);
+            //Console.WriteLine(document.FullText);
         }
 
 
