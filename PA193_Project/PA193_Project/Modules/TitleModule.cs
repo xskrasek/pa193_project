@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using PA193_Project.Entities;
@@ -34,6 +35,7 @@ namespace PA193_Project.Modules
             Regex sectionsRegex = new Regex(@"(?:\r?\n|^)((?:\r?\n|.(?!\.(\s|$)))+?)(?=\r?\n\r?\n|$)",
                 RegexOptions.Compiled);
             Regex colonFieldRegex = new Regex(@"\s*\S+:.*", RegexOptions.Compiled);
+            Regex isoDateRegex = new Regex(@"\d{4}-\d{2}-\d{2}", RegexOptions.Compiled);
 
             string title = "";
 
@@ -43,11 +45,13 @@ namespace PA193_Project.Modules
                 MatchCollection matches = sectionsRegex.Matches(page);
                 foreach (Match match in matches)
                 {
-                    if (!colonFieldRegex.Match(match.Value).Success)
+                    if (!colonFieldRegex.Match(match.Value).Success && !isoDateRegex.Match(match.Value).Success)
                     {
                         title = match.Value;
+                        break;
                     }
                 }
+                if (title.Length > 0) { break; }
             }
 
             title = Regex.Replace(title.Trim(), @"\r\n?|\n", " ");
