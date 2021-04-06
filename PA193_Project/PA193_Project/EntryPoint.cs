@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using Microsoft.Extensions.CommandLineUtils;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PA193_Project.CommandLine;
 using PA193_Project.Entities;
@@ -56,8 +54,6 @@ namespace PA193_Project
                 _parserService.RegisterModule(new HeaderFooterModule());
                 _parserService.RegisterModule(new TitleModule());
                 _parserService.RegisterModule(new VersionsModule());
-                var results = _parserService.Parse(document);
-
 
                 _logger.LogDebug($"{filepath} -[ all ]-> {output}");
                 Document document = new Document
@@ -67,7 +63,6 @@ namespace PA193_Project
 
                 _logger.LogDebug($"Generated {document.Indices.Count} indices");
 
-                _parserService.RegisterModule(new TitleModule()); ;
                 var results = _parserService.Parse(document);
 
                 JsonSerializerOptions serializerOptions = new JsonSerializerOptions
