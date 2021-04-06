@@ -52,6 +52,7 @@ namespace PA193_Project
                 _logger.LogDebug($"Filepath: {filepath}");
                 _logger.LogDebug($"Output: {output}");
 
+
                 _parserService.RegisterModule(new HeaderFooterModule());
                 _parserService.RegisterModule(new TitleModule());
                 _parserService.RegisterModule(new VersionsModule());
