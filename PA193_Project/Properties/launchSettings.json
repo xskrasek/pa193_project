@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PA193_Project": {
+      "commandName": "Project",
+      "commandLineArgs": " doc2.txt"
+    }
+  }
+}
