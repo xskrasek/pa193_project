@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using PA193_Project.CommandLine;
@@ -68,7 +69,8 @@ namespace PA193_Project
                 JsonSerializerOptions serializerOptions = new JsonSerializerOptions
                 {
                     IgnoreNullValues = true,
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 };
                 //Console.WriteLine(results.Title);
                 Console.WriteLine(JsonSerializer.Serialize(results, serializerOptions));
