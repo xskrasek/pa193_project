@@ -32,7 +32,7 @@ namespace PA193_Project.Modules
                 i++;
             }
 
-            intermmediateResult.Versions = result;
+            intermmediateResult.versions = result;
         }
     }
 }

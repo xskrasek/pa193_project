@@ -4,11 +4,11 @@ namespace PA193_Project.Entities
 {
     class ParseResult
     {
-        public string Title { get; set; }
-        public Dictionary<string, HashSet<string>> Versions { get; set; }
-        public string[][] TableOfContents { get; set; }
-        public Revision[] Revisions { get; set; }
-        public Dictionary<string, string> Bibliography { get; set; }
+        public string title { get; set; } = "";
+        public Dictionary<string, HashSet<string>> versions { get; set; } = new Dictionary<string, HashSet<string>>();
+        public string[][] table_of_contents { get; set; } = System.Array.Empty<string[]>();
+        public Revision[] revisions { get; set; } = System.Array.Empty<Revision>();
+        public Dictionary<string, string> bibliography { get; set; } = new Dictionary<string, string>();
 
         public class Revision
         {
