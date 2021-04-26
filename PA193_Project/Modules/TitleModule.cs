@@ -50,6 +50,7 @@ namespace PA193_Project.Modules
             Regex isoDateRegex = new Regex(@"\d{4}-\d{2}-\d{2}", RegexOptions.Compiled);
 
             string title = "";
+            Dictionary<String, int> candidates = new Dictionary<string, int>();
 
             for (int pageIdx = 0; pageIdx < pages.Count; pageIdx++)
             {
@@ -57,16 +58,59 @@ namespace PA193_Project.Modules
                 MatchCollection matches = sectionsRegex.Matches(page);
                 foreach (Match match in matches)
                 {
+                    // possibly add some manufacturer detection
                     if (!colonFieldRegex.Match(match.Value).Success && !isoDateRegex.Match(match.Value).Success)
                     {
-                        title = match.Value;
-                        break;
+                        if (match.Value.Trim().Length > 0 && !candidates.ContainsKey(match.Value))
+                            candidates.Add(match.Value, this.calculateScore(match.Value));
                     }
                 }
                 if (title.Length > 0) { break; }
             }
 
+            title = candidates.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+            //candidates.Select(i => $"{i.Key.Trim().Substring(0, Math.Min(40, i.Key.Trim().Length))}: {i.Value}").ToList().ForEach(Console.Error.WriteLine);
+
             return title;
+        }
+
+        private int calculateScore(string value)
+        {
+            // Keywords are either manufacturer names, well-known models or generic keywords related to certification targets
+            String[] keywords = { "nxp", "infineon", "jcop", "ifx_cci", "idemia", "optigatm",
+                                  "crypto", "librar", "module", "smart", "card", "controller" };
+            String[] negativeKeywords = { "eal", "common", "criteria", "certificate" };
+            int score = 0;
+            foreach (string word in keywords)
+            {
+                // 10 pts for keyword match
+                if (value.ToLower().Contains(word)) score += 10;
+            }
+
+            foreach (string word in negativeKeywords)
+            {
+                // deduct 7 points for negative keyword
+                if (value.ToLower().Contains(word)) score -= 7;
+            }
+
+            // 5pts for model number match (awarded only once)
+            MatchCollection modelMatches = new Regex(@"([A-Z0-9_]){3,}", RegexOptions.Compiled).Matches(value);
+            foreach(Match match in modelMatches)
+            {
+                if (!keywords.Contains(match.Value.ToLower()))
+                {
+                    score += 5;
+                    break;
+                }
+            }
+
+            // 3+3pts for the version number
+            Match versionMatch = new Regex(@"\sv?[0-9\.]+(\s|$)", RegexOptions.Compiled | RegexOptions.IgnoreCase).Match(value.ToLower());
+            if (versionMatch.Success) score += 3;
+            // +3 pts if it really is a version number, not just a number
+            if (versionMatch.Value.StartsWith('v') || versionMatch.Value.Contains('.')) score += 3;
+
+            return score;
         }
 
         private string STLineHeuristic(string page)
@@ -81,13 +125,22 @@ namespace PA193_Project.Modules
             int stlineIndex = blockLines.Select(l => l.Trim().ToLower()).ToList().IndexOf("security target lite");
             // Remove the st line if it is the first line
             // This may not be necessary, because some jsons do include it
-            if (stlineIndex == 0)
-                block = String.Join('\n', blockLines.GetRange(1, blockLines.Count));
+            if (stlineIndex == 0 && block.Length > 1)
+                block = String.Join('\n', blockLines.Skip(1));
 
             // Some NXP documents have stline after the title
-            if (blockLines[stlineIndex + 1].Trim().ToLower().StartsWith("rev"))
+            if (stlineIndex + 1 < blockLines.Count && blockLines[stlineIndex + 1].Trim().ToLower().StartsWith("rev"))
             {
                 block = String.Join('\n', blockLines.GetRange(0, stlineIndex));
+            }
+
+            // Some NSCIB-CC... files have title preceeding the stline
+            if (block.ToLower().Contains("nscib"))
+            {
+                // we need a new block with contents before the stline block
+                // therefore we need to look for the string in all of the lines
+                int newIndex = lines.Select(l => l.Trim().ToLower()).ToList().IndexOf("security target lite");
+                block = this.GetBlock(lines, newIndex - 2);
             }
 
             return block;
