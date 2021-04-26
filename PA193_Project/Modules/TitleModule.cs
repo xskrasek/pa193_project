@@ -20,8 +20,20 @@ namespace PA193_Project.Modules
         /// <param name="intermmediateResult">Result to store the title in</param>
         public void Extract(Document document, ref ParseResult intermmediateResult)
         {
-            // TODO extracts the first line for now (testing purposes)
             List<string> pages = Enumerable.Range(0, 2).Select(n => document.GetPage(n)).ToList();
+
+            string title = this.STLineHeuristic(pages[0]); // TODO iterate over pages instead of assuming 0
+            if (title.Length == 0) title = this.BlankForHeuristic(pages[0]);
+            if (title.Length == 0) title = this.BlankLineHeurustic(pages);
+
+            title = Regex.Replace(title.Trim(), @"\r\n?|\n", " ");
+            title = Regex.Replace(title, @"[ ]{2,}", " ");
+            intermmediateResult.Title = title;
+        }
+
+
+        private string BlankLineHeurustic(List<string> pages)
+        {
             /*
              * Regex explanation:
              * (?:\r?\n|^) = Look for any potential blank lines before the main group
@@ -54,10 +66,57 @@ namespace PA193_Project.Modules
                 if (title.Length > 0) { break; }
             }
 
-            title = Regex.Replace(title.Trim(), @"\r\n?|\n", " ");
-            title = Regex.Replace(title, @"[ ]{2,}", " ");
+            return title;
+        }
 
-            intermmediateResult.Title = title;
+        private string STLineHeuristic(string page)
+        {
+            // Security Target Lite line should be on the first page, so we can check only that
+            List<string> lines = page.Split("\n").ToList();
+            var stlines = lines.Where(l => l.Trim().ToLower().StartsWith("security target")).ToList();
+            if (stlines.Count == 0) return "";
+            string block = this.GetBlock(lines, lines.IndexOf(stlines[0]));
+            List<string> blockLines = block.Split('\n').ToList();
+
+            int stlineIndex = blockLines.Select(l => l.Trim().ToLower()).ToList().IndexOf("security target lite");
+            // Remove the st line if it is the first line
+            // This may not be necessary, because some jsons do include it
+            if (stlineIndex == 0)
+                block = String.Join('\n', blockLines.GetRange(1, blockLines.Count));
+
+            // Some NXP documents have stline after the title
+            if (blockLines[stlineIndex + 1].Trim().ToLower().StartsWith("rev"))
+            {
+                block = String.Join('\n', blockLines.GetRange(0, stlineIndex));
+            }
+
+            return block;
+        }
+
+        private string BlankForHeuristic(string page)
+        {
+            List<string> lines = page.Split('\n').Select(l => l.Trim()).ToList();
+            int forIndex = lines.IndexOf("for");
+            string block = this.GetBlock(lines, forIndex + 2);
+            int fromIndex = block.IndexOf("from");
+            if (fromIndex != -1)
+                block = block.Substring(0, fromIndex);
+
+            return block;
+        }
+
+        private string GetBlock(List<string> fragment, int startIndex)
+        {
+            int i = startIndex;
+
+            while (fragment[i].Trim().Length > 0 && i < fragment.Count) i++;
+            int end = i;
+
+            i = startIndex;
+            while (fragment[i].Trim().Length > 0 && i > 0) i--;
+            int start = (fragment[i].Trim().Length > 0) ? 0 : i + 1;
+
+            return String.Join('\n', fragment.GetRange(start, end));
         }
     }
 }
