@@ -28,7 +28,7 @@ namespace PA193_Project.Modules
 
             title = Regex.Replace(title.Trim(), @"\r\n?|\n", " ");
             title = Regex.Replace(title, @"[ ]{2,}", " ");
-            intermmediateResult.Title = title;
+            intermmediateResult.title = title;
         }
 
 

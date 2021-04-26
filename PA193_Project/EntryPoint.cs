@@ -68,8 +68,8 @@ namespace PA193_Project
 
                 JsonSerializerOptions serializerOptions = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    IgnoreNullValues = false,
+                    //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 };
                 //Console.WriteLine(results.Title);
