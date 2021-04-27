@@ -27,7 +27,10 @@ namespace PA193_Project.Modules
                 //For triple-des
                 if (i == 6) matches = Regex.Matches(document.FullText, pattern, RegexOptions.IgnoreCase);
                 var matches_string = new HashSet<string>();
-                foreach (Match match in matches) matches_string.Add(match.Value.Trim());
+                foreach (Match match in matches)
+                {
+                    if (match.Value.Trim().ToUpper() != "DES") matches_string.Add(match.Value.Trim());
+                }
                 if (matches_string.Count != 0) result.Add(versions[i], matches_string);
                 i++;
             }
