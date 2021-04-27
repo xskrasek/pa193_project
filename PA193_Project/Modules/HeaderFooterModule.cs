@@ -144,13 +144,6 @@ namespace PA193_Project.Modules
                                 index_diff++;
                             }
 
-                            /*//This evens out the difference in case of whitespaces after numbers.
-                            while (char.IsWhiteSpace(ReverseFullText[text_index + j]))
-                            {
-                                j++;
-                                //lower index diff so comparison for header does not break in case of big numbers
-                                index_diff++;
-                            }*/
                             j--;
                         }
                         //Handle brackets and maybe others in the future
