@@ -46,7 +46,7 @@ namespace PA193_Project.Modules
             //                             the number at the end. It is put in place instead of the repeating dots.
             //                          \s* = more whitespace
             //                             (\d+) = the page number
-            Regex tocLineParseRegex = new Regex(@"^%?\s*((?:\d\.?)+)%?\s*([^\%]+)%\s*(\d+)$",
+            Regex tocLineParseRegex = new Regex(@"^%?\s*((?:\d\.?)*)%?\s*([^\%]+)%\s*(\d+)$",
                 RegexOptions.Compiled | RegexOptions.Multiline);
             var results = new List<dynamic[]>();
             foreach(string line in tocLines)
