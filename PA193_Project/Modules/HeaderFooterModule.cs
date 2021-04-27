@@ -82,6 +82,7 @@ namespace PA193_Project.Modules
 
                 current = FullTextCopy[i] switch
                 {
+                    '+' => "\\" + FullTextCopy[i] + current,
                     '|' => "\\" + FullTextCopy[i] + current,
                     '(' => "\\" + FullTextCopy[i] + current,
                     ')' => "\\" + FullTextCopy[i] + current,
@@ -90,10 +91,6 @@ namespace PA193_Project.Modules
                     _ => FullTextCopy[i] + current
                 };
 
-
-                Console.WriteLine(current);
-                var l = Regex.Matches(FullTextCopy, current);
-                Console.WriteLine(Regex.Matches(FullTextCopy, current).Count);
             }
 
             //remove the char, that breaks the margin, if its special char, two removes two so its ok
@@ -157,8 +154,8 @@ namespace PA193_Project.Modules
                             j--;
                         }
                         //Handle brackets and maybe others in the future
-                         else if (new[] {'(', ')', '|' }.Contains(ReverseFullText[text_index + j]) && current_char == '\\'
-                            && new[] {'(', ')', '|' }.Contains(footer[j - index_diff + 2]) && ReverseFullText[text_index+j] == footer[j-index_diff+2])
+                         else if (new[] {'(', ')', '|' , '+' }.Contains(ReverseFullText[text_index + j]) && current_char == '\\'
+                            && new[] {'(', ')', '|' , '+' }.Contains(footer[j - index_diff + 2]) && ReverseFullText[text_index+j] == footer[j-index_diff+2])
                         {
                             //move header forward and also full text behind the bracket
                             index_diff--;
@@ -183,13 +180,13 @@ namespace PA193_Project.Modules
                     var p = ReverseFullText.Length;
                     if (j > 0)
                         //no +1 here, we need to keep the symbol alive
-                        ReverseFullText = ReverseFullText.Remove(text_index + 1, j - 2 - whitespaceOffset);
+                    if (j-2-whitespaceOffset >0) ReverseFullText = ReverseFullText.Remove(text_index + 1, j - 2 - whitespaceOffset);
                 }
             }
 
             var ReverseBack = new string(ReverseFullText.Reverse().ToArray());
             document.FullText = ReverseBack.Replace("n\\", "\n");
-            Console.WriteLine(document.FullText);
+            //Console.WriteLine(document.FullText);
 
 
             //Go down (higher index) to find matches
@@ -224,6 +221,7 @@ namespace PA193_Project.Modules
 
                     current += FullTextCopy[i] switch
                     {
+                        '+' => "\\" + FullTextCopy[i],
                         '[' => "\\" + FullTextCopy[i],
                         ']' => "\\" + FullTextCopy[i] ,
                         '|' => "\\" + FullTextCopy[i],
@@ -300,9 +298,9 @@ namespace PA193_Project.Modules
                                 }
                             }
                             //Handle brackets and maybe others in the future
-                            else if (new[] {'(', ')', '|' , '[' , ']' }.Contains(document.FullText[text_index + j]) &&
+                            else if (new[] {'(', ')', '|' , '[' , ']', '+' }.Contains(document.FullText[text_index + j]) &&
                                      current_char == '\\'
-                                     && new[] {'(', ')', '|' , '[' , ']' }.Contains(header[j - index_diff + 2]))
+                                     && new[] {'(', ')', '|' , '[' , ']', '+' }.Contains(header[j - index_diff + 2]))
                             {
                                 //move header forward and also full text behind the bracket
                                 index_diff -= 1;
