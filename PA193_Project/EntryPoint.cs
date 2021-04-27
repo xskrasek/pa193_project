@@ -54,6 +54,7 @@ namespace PA193_Project
 
                 _parserService.RegisterModule(new HeaderFooterModule());
                 _parserService.RegisterModule(new TitleModule());
+                _parserService.RegisterModule(new TOCModule());
                 _parserService.RegisterModule(new VersionsModule());
 
                 _logger.LogDebug($"{filepath} -[ all ]-> {output}");
@@ -70,7 +71,7 @@ namespace PA193_Project
                 {
                     IgnoreNullValues = false,
                     //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    //Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 };
                 //Console.WriteLine(results.Title);
                 Console.WriteLine(JsonSerializer.Serialize(results, serializerOptions));
