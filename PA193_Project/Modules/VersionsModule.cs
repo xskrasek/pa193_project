@@ -16,7 +16,7 @@ namespace PA193_Project.Modules
             var jc = @"Java Card \d(\.\d)*";
             var sha = @"SHA(-|\s)?\d{1,3}";
             var rsa = @"RSA((\s|-|_)?\d{3,4}(\/\d{3,4})?|-CRT|SignaturePKCS1|SSA-PSS)";
-            var ecc = @"ECC(\s|-)?\d{0,4}?";
+            var ecc = @"ECC(\s|-)?\d{1,4}?";
             var des = @"(single|3|Triple|T)?(\s|-)?DES\d?";
 
             to_match.AddRange(new List<string> {eal, gp, jc, sha, rsa, ecc, des});
