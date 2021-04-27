@@ -1,8 +1,9 @@
 {
   "profiles": {
     "PA193_Project": {
-      "commandName": "Project",
-      "commandLineArgs": " doc2.txt"
+      "commandName": "Executable",
+      "executablePath": "G:\\pa193-project\\project\\PA193_Project\\bin\\Debug\\net5.0\\PA193_Project.exe",
+      "commandLineArgs": "-output arg"
     }
   }
 }

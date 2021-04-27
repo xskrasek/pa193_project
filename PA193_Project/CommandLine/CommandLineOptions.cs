@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace PA193_Project.CommandLine
@@ -50,16 +51,21 @@ namespace PA193_Project.CommandLine
         internal bool IsEmpty() { return storage.Count == 0; }
     }
 
+    [Serializable]
+    public class CommandLineArgumentException : Exception
+    {
+        public CommandLineArgumentException() { }
+        public CommandLineArgumentException(string message) : base(message) { }
+        public CommandLineArgumentException(string message, Exception innerException) : base(message, innerException) { }
+        protected CommandLineArgumentException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    }
+
     class CommandLineOptions
     {
         private Dictionary<string, CommandLineOption> availableOptions = new Dictionary<string, CommandLineOption>();
         private CommandLineOption argumentOption;
 
         private ParsedOptions presentOptions = new ParsedOptions();
-
-        private string helpOption;
-        private string versionOption;
-        private string versionString;
 
         public string executablePath { get; set; }
 
@@ -68,7 +74,7 @@ namespace PA193_Project.CommandLine
             if (option == null) { throw new ArgumentNullException(); }
             if (option.OptionType == CommandLineOptionType.Argument)
             {
-                if (argumentOption != null) { throw new ArgumentException($"Argument option is set already"); }
+                if (argumentOption != null) { throw new CommandLineArgumentException($"Argument option is set already"); }
                 argumentOption = option;
             }
             if (!this.availableOptions.ContainsKey(option.Name)) { this.availableOptions.Add(option.Name, option); }
@@ -77,7 +83,7 @@ namespace PA193_Project.CommandLine
         public ParsedOptions Parse(string[] args)
         {
             if (args == null) { throw new ArgumentNullException(); }
-            if (args.Length < 1) { throw new ArgumentException(); }
+            if (args.Length < 1) { throw new CommandLineArgumentException(); }
 
             // this.executablePath = args[0];
             // Apparently not on windows
@@ -89,19 +95,19 @@ namespace PA193_Project.CommandLine
                 {
                     // Check if the option is supported
                     string[] splitSwitch = arg.Split(new string[] { "--", "-", "\\" }, StringSplitOptions.TrimEntries);
-                    if (splitSwitch.Length != 2) { throw new ArgumentException($"Option {arg} is malformed"); }
-                    if (!availableOptions.ContainsKey(splitSwitch[1])) { throw new ArgumentException($"Option {arg} is not supported"); }
+                    if (splitSwitch.Length != 2) { throw new CommandLineArgumentException($"Option {arg} is malformed"); }
+                    if (!availableOptions.ContainsKey(splitSwitch[1])) { throw new CommandLineArgumentException($"Option {arg} is not supported"); }
 
                     string argName = splitSwitch[1];
                     CommandLineOption option = availableOptions[argName].Clone();
-                    if (presentOptions.ContainsKey(argName)) { throw new ArgumentException($"Option {arg} is present already"); }
+                    if (presentOptions.ContainsKey(argName)) { throw new CommandLineArgumentException($"Option {arg} is present already"); }
 
                     object value = null;
 
                     switch(option.OptionType)
                     {
                         case CommandLineOptionType.Option:
-                            if (i + 1 >= args.Length) { throw new ArgumentException($"Option {arg} expects an argument"); }
+                            if (i + 1 >= args.Length) { throw new CommandLineArgumentException($"Option {arg} expects an argument"); }
                             string argument = args[i + 1];
                             i += 1; // Explicit is better than implicit
                             value = argument;
@@ -113,7 +119,7 @@ namespace PA193_Project.CommandLine
                             break;
 
                         case CommandLineOptionType.Argument:
-                            throw new ArgumentException($"Option {arg} should be used as an argument without any switch");
+                            throw new CommandLineArgumentException($"Option {arg} should be used as an argument without any switch");
                     }
 
                     if (!presentOptions.ContainsKey(option.Name)) { presentOptions.Add(option.Name, value); }
@@ -134,14 +140,16 @@ namespace PA193_Project.CommandLine
             sb.AppendLine("Usage: ");
             foreach (var option in availableOptions.Values)
             {
-                sb.Append("\t");
+                string prefix = (option.Name.Length == 1) ? "-" : "--";
+
+                sb.Append('\t');
                 switch (option.OptionType)
                 {
                     case CommandLineOptionType.Switch:
-                        sb.Append($"-{option.Name}");
+                        sb.Append($"{prefix}{option.Name}");
                         break;
                     case CommandLineOptionType.Option:
-                        sb.Append($"-{option.Name} <argument>");
+                        sb.Append($"{prefix}{option.Name} <argument>");
                         break;
                     case CommandLineOptionType.Argument:
                         sb.Append($"<argument...>");
@@ -150,17 +158,6 @@ namespace PA193_Project.CommandLine
                 sb.AppendLine($"\t {option.Description}");
             }
             return sb.ToString();
-        }
-
-        internal void SetHelpOption(string v)
-        {
-            this.helpOption = v;
-        }
-
-        internal void SetVersionOption(string v, string versionString)
-        {
-            this.versionOption = v;
-            this.versionString = versionString;
         }
     }
 }
