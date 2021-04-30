@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "PA193_Project": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\adams\\Documents\\school\\jaro2021\\PA193\\Project\\Gitfolder\\pa193_project\\PA193_Project\\bin\\Debug\\net5.0\\PA193_Project.exe",
+      "commandLineArgs": "doc2.txt -title -versions -toc"
+    }
+  }
+}
