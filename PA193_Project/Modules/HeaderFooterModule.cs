@@ -166,8 +166,6 @@ namespace PA193_Project.Modules
                 //If this part of document with the symbol matches header, remove it 
                 if (isMatch)
                 {
-                    if (j > 0)
-                        //no +1 here, we need to keep the symbol alive
                     if (j-2-whitespaceOffset >0) reverseFullText = reverseFullText.Remove(textIndex + 1, j - 2 - whitespaceOffset);
                 }
             }
