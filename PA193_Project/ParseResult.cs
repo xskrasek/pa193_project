@@ -13,9 +13,9 @@ namespace PA193_Project.Entities
 
         public class Revision
         {
-            string version;
-            string date;
-            string description;
+            //string version;
+            //string date;
+            //string description;
         }
     }
 }

@@ -62,22 +62,22 @@ namespace PA193_Project.CommandLine
 
     class CommandLineOptions
     {
-        private Dictionary<string, CommandLineOption> availableOptions = new Dictionary<string, CommandLineOption>();
-        private CommandLineOption argumentOption;
+        private Dictionary<string, CommandLineOption> _availableOptions = new Dictionary<string, CommandLineOption>();
+        private CommandLineOption _argumentOption;
 
-        private ParsedOptions presentOptions = new ParsedOptions();
+        private ParsedOptions _presentOptions = new ParsedOptions();
 
-        public string executablePath { get; set; }
+        public string ExecutablePath { get; set; }
 
         public void AddOption(CommandLineOption option)
         {
             if (option == null) { throw new ArgumentNullException(); }
             if (option.OptionType == CommandLineOptionType.Argument)
             {
-                if (argumentOption != null) { throw new CommandLineArgumentException($"Argument option is set already"); }
-                argumentOption = option;
+                if (_argumentOption != null) { throw new CommandLineArgumentException($"Argument option is set already"); }
+                _argumentOption = option;
             }
-            if (!this.availableOptions.ContainsKey(option.Name)) { this.availableOptions.Add(option.Name, option); }
+            if (!this._availableOptions.ContainsKey(option.Name)) { this._availableOptions.Add(option.Name, option); }
         }
 
         public ParsedOptions Parse(string[] args)
@@ -94,13 +94,13 @@ namespace PA193_Project.CommandLine
                 if (arg.StartsWith("-") || arg.StartsWith("\\"))
                 {
                     // Check if the option is supported
-                    string[] splitSwitch = arg.Split(new string[] { "--", "-", "\\" }, StringSplitOptions.TrimEntries);
+                    string[] splitSwitch = arg.Split(new[] { "--", "-", "\\" }, StringSplitOptions.TrimEntries);
                     if (splitSwitch.Length != 2) { throw new CommandLineArgumentException($"Option {arg} is malformed"); }
-                    if (!availableOptions.ContainsKey(splitSwitch[1])) { throw new CommandLineArgumentException($"Option {arg} is not supported"); }
+                    if (!_availableOptions.ContainsKey(splitSwitch[1])) { throw new CommandLineArgumentException($"Option {arg} is not supported"); }
 
                     string argName = splitSwitch[1];
-                    CommandLineOption option = availableOptions[argName].Clone();
-                    if (presentOptions.ContainsKey(argName)) { throw new CommandLineArgumentException($"Option {arg} is present already"); }
+                    CommandLineOption option = _availableOptions[argName].Clone();
+                    if (_presentOptions.ContainsKey(argName)) { throw new CommandLineArgumentException($"Option {arg} is present already"); }
 
                     object value = null;
 
@@ -122,23 +122,23 @@ namespace PA193_Project.CommandLine
                             throw new CommandLineArgumentException($"Option {arg} should be used as an argument without any switch");
                     }
 
-                    if (!presentOptions.ContainsKey(option.Name)) { presentOptions.Add(option.Name, value); }
+                    if (!_presentOptions.ContainsKey(option.Name)) { _presentOptions.Add(option.Name, value); }
                 }
                 else // Handling arguments without - or / prefixes
                 {
-                    if (argumentOption.Value == null) { argumentOption.Value = new List<string>(); }
-                    ((List<string>)argumentOption.Value).Add(arg);
+                    if (_argumentOption.Value == null) { _argumentOption.Value = new List<string>(); }
+                    ((List<string>)_argumentOption.Value).Add(arg);
                 }
             }
-            if (argumentOption.Value != null) { presentOptions.Add(argumentOption.Name, argumentOption.Value); }
-            return presentOptions;
+            if (_argumentOption.Value != null) { _presentOptions.Add(_argumentOption.Name, _argumentOption.Value); }
+            return _presentOptions;
         }
 
         public string GetHelp()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Usage: ");
-            foreach (var option in availableOptions.Values)
+            foreach (var option in _availableOptions.Values)
             {
                 string prefix = (option.Name.Length == 1) ? "-" : "--";
 

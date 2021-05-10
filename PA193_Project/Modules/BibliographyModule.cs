@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using PA193_Project.Entities;
 using System;
 using System.Text;
@@ -6,7 +6,6 @@ using System.IO;
 
 namespace PA193_Project.Modules
 {
-	/*
 	class BibliographyModule : IModule
 	{
 
@@ -152,5 +151,4 @@ namespace PA193_Project.Modules
 			}
 		}
 	}
-	*/
-}
+}*/
