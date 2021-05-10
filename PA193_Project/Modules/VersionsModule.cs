@@ -9,7 +9,7 @@ namespace PA193_Project.Modules
         public void Extract(Document document, ref ParseResult intermmediateResult)
         {
             var result = new Dictionary<string, HashSet<string>>();
-            var to_match = new List<string>();
+            var toMatch = new List<string>();
             var versions = new List<string> {"eal", "global_platfom", "java_card", "sha", "rsa", "ecc", "des"};
             var eal = @"EAL(\d|\s\d)(\+)?";
             var gp = @"Global(\s)?Platform \d(\.\d)*";
@@ -19,19 +19,19 @@ namespace PA193_Project.Modules
             var ecc = @"ECC(\s|-)?\d{1,4}?";
             var des = @"(single|3|Triple|T)?(\s|-)?DES\d?";
 
-            to_match.AddRange(new List<string> {eal, gp, jc, sha, rsa, ecc, des});
+            toMatch.AddRange(new List<string> {eal, gp, jc, sha, rsa, ecc, des});
             var i = 0;
-            foreach (var pattern in to_match)
+            foreach (var pattern in toMatch)
             {
                 var matches = Regex.Matches(document.FullText, pattern);
                 //For triple-des
                 if (i == 6) matches = Regex.Matches(document.FullText, pattern, RegexOptions.IgnoreCase);
-                var matches_string = new HashSet<string>();
+                var matchesString = new HashSet<string>();
                 foreach (Match match in matches)
                 {
-                    if (match.Value.Trim().ToUpper() != "DES") matches_string.Add(match.Value.Trim());
+                    if (match.Value.Trim().ToUpper() != "DES") matchesString.Add(match.Value.Trim());
                 }
-                if (matches_string.Count != 0) result.Add(versions[i], matches_string);
+                if (matchesString.Count != 0) result.Add(versions[i], matchesString);
                 i++;
             }
 

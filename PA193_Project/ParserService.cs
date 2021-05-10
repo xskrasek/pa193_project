@@ -1,5 +1,4 @@
-﻿using System;
-using PA193_Project.Entities;
+﻿using PA193_Project.Entities;
 using PA193_Project.Modules;
 
 namespace PA193_Project.Services
@@ -8,15 +7,15 @@ namespace PA193_Project.Services
 
     class ParserService : IParserService
     {
-        private ModuleChain moduleChain; 
+        private ModuleChain _moduleChain; 
 
         public ParseResult Parse(Document document)
         {
             ParseResult finalResult = new ParseResult();
-            moduleChain(document, ref finalResult);
+            _moduleChain(document, ref finalResult);
             return finalResult;
         }
 
-        public void RegisterModule(IModule module) => moduleChain += module.Extract;
+        public void RegisterModule(IModule module) => _moduleChain += module.Extract;
     }
 }

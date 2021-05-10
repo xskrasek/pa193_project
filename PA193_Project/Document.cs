@@ -39,15 +39,8 @@ namespace PA193_Project.Entities
             {
                 // Checks for both, if path exists and is a file (as opposed to directory)
                 if (!File.Exists(value)) { throw new FileNotFoundException(value); }
-                try
-                {
-                    using var streamReader = new StreamReader(value);
-                    this.FullText = streamReader.ReadToEnd();
-                }
-                catch (IOException)
-                {
-                    throw; // For now to test global exception handling
-                }
+                using var streamReader = new StreamReader(value);
+                this.FullText = streamReader.ReadToEnd();
                 _filepath = value;
             }
         }
