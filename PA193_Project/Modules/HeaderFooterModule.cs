@@ -57,7 +57,6 @@ namespace PA193_Project.Modules
 
             //Reverse text, so search is the same as for header
             var reverseFullText = new string(document.FullText.Reverse().ToArray());
-            //var ReverseFulltext = reverseFullText.Replace("\n", "n\\");
             var collections = Regex.Matches(fullTextCopy, @"");
 
             if (collections.Count() <= 5)
@@ -128,7 +127,6 @@ namespace PA193_Project.Modules
                     //check for already full match
                     if (j - indexDiff + 1 >= footer.Length) break;
                     var currentChar = footer[j - indexDiff + 1];
-                    var textChar = reverseFullText[textIndex + j];
                     if (reverseFullText[textIndex + j] != currentChar)
                     {
                         //Number matching case, header has \d+ and real text some numbers
@@ -158,8 +156,6 @@ namespace PA193_Project.Modules
                         
                         else
                         {
-                            currentChar = footer[j - indexDiff + 1];
-                            textChar = reverseFullText[textIndex + j];
                             //As the matching should be at least as long as the header text, take all longer as ok 
                             if (j < footer.Length) isMatch = false;
                             break;
@@ -170,7 +166,6 @@ namespace PA193_Project.Modules
                 //If this part of document with the symbol matches header, remove it 
                 if (isMatch)
                 {
-                    var p = reverseFullText.Length;
                     if (j > 0)
                         //no +1 here, we need to keep the symbol alive
                     if (j-2-whitespaceOffset >0) reverseFullText = reverseFullText.Remove(textIndex + 1, j - 2 - whitespaceOffset);
@@ -204,8 +199,6 @@ namespace PA193_Project.Modules
                 //extend the string by one char and check, if this pattern appers enough (quite random percentage) times in the whole document
                 while (Regex.Matches(fullTextCopy, current).Count > collections.Count * 40 / 100)
                 {
-                    var al = Regex.Matches(fullTextCopy, current).Count;
-                    var mon = collections.Count / 100 * 30;
                     i++;
                     if (i > fullTextCopy.Length - 1) return;
 
@@ -223,7 +216,6 @@ namespace PA193_Project.Modules
                         var c when char.IsDigit(c) => "\\d+",
                         _ => fullTextCopy[i],
                     };
-                    var pocet = Regex.Matches(fullTextCopy, current).Count;
                 }
 
                 if (current[current.Length - 1] == '+') current = current.Remove(current.Length - 1);
@@ -302,9 +294,6 @@ namespace PA193_Project.Modules
                             //In case the text is really different and should not be matched further
                             else
                             {
-                                var a = document.FullText[textIndex + j];
-                                var b = header[j - indexDiff + 1];
-
                                 //As the matching should be at least as long as the header text, take all longer as ok 
                                 if (j < header.Length) isMatch = false;
                                 break;
@@ -315,7 +304,6 @@ namespace PA193_Project.Modules
                     //If this part of document with the symbol matches header, remove it 
                     if (isMatch)
                     {
-                        var p = document.FullText.Length;
                         if (j > 0) document.FullText = document.FullText.Remove(textIndex + 1, j - 2);
                     }
                 }
