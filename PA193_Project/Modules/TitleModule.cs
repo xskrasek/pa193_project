@@ -161,15 +161,14 @@ namespace PA193_Project.Modules
         private string GetBlock(List<string> fragment, int startIndex)
         {
             int i = startIndex;
-
-            while (fragment[i].Trim().Length > 0 && i < fragment.Count) i++;
+            while (i < fragment.Count && fragment[i].Trim().Length > 0) i++;
             int end = i;
 
             i = startIndex;
-            while (fragment[i].Trim().Length > 0 && i > 0) i--;
-            int start = (fragment[i].Trim().Length > 0) ? 0 : i + 1;
+            while (i > 0 && fragment[i].Trim().Length > 0) i--;
+            int start = (i >= fragment.Count || fragment[i].Trim().Length > 0) ? 0 : i + 1;
 
-            return String.Join('\n', fragment.GetRange(start, end));
+            return String.Join('\n', fragment.GetRange(Math.Max(start, 0), Math.Max(end - start, 0)));
         }
     }
 }
