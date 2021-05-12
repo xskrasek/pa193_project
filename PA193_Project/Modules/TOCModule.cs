@@ -60,9 +60,15 @@ namespace PA193_Project.Modules
                 dynamic[] parsedLine = new dynamic[3];
                 parsedLine[0] = match.Groups[1].Value.Trim();
                 parsedLine[1] = match.Groups[2].Value.Trim();
-                parsedLine[2] = int.Parse(match.Groups[3].Value.Trim());
 
-                results.Add(parsedLine);
+                try
+                {
+                    parsedLine[2] = int.Parse(match.Groups[3].Value.Trim());
+                    results.Add(parsedLine);
+                }
+                catch (System.OverflowException)
+                {
+                }
             }
 
             intermmediateResult.table_of_contents = results.ToArray();
