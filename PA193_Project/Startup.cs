@@ -14,7 +14,7 @@ namespace PA193_Project
             serviceCollection.AddLogging(builder =>
             {
                 builder
-                .AddFilter("PA193_Project", LogLevel.None)
+                .AddFilter("PA193_Project", LogLevel.Warning)
                 .AddConsole();
             });
             serviceCollection.AddTransient<EntryPoint>();
